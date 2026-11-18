@@ -1,4 +1,5 @@
 ﻿
+using System.Numerics;
 using Raylib_cs;
 using static Raylib_cs.Raylib;
 
@@ -10,31 +11,45 @@ namespace FnafCamerasAttempt
         public string name;
         public Color color;
 
-        private static int buttonSide = 30;
-        private static int distance = 45;
-        private static int textSize = 10;
+        const int buttonSideX = 70;
+        const int buttonSideY = 40;
+        private Rectangle buttonRec;
+        const int textSize = 25;
 
-   
-        public Room(int newNumber, string newName, Color newColor)
+        private int buttonYPos;
+        private int buttonXPos;
+
+        public Room(int newNumber, string newName, int buttonX, int buttonY, Color newColor)
         {
             number = newNumber;
             name = newName;
+
+            buttonXPos = buttonX;
+            buttonYPos = buttonY;
+
             color = newColor;
+
+
+            buttonRec = new Rectangle(buttonXPos,buttonYPos,buttonSideX,buttonSideY);
         }
-        public void DrawCamera()
+        public void DrawCamera(int currentRoom)
         {
-            int buttonYPos = distance;
-            int buttonXPos = number * distance + distance;
-            DrawRectangle(buttonXPos, buttonYPos, buttonSide, buttonSide, Color.Gray);
+            Color colorForActiveCamera = Color.Gray;
+            if (currentRoom == number) 
+            { 
+                colorForActiveCamera = Color.LightGray;
+                DrawText($"{name}", 1200, 20, 50, Color.White);
+            }
+            DrawRectangle(buttonXPos, buttonYPos, buttonSideX, buttonSideY, colorForActiveCamera);
             DrawText($"CAM{number}", buttonXPos, buttonYPos, textSize, Color.White);
         }
 
-        public int? Onclick(int mouseX, int mouseY)
+        public bool OnClick(int mouseX, int mouseY)
         {
-            int buttonYPos = distance;
-            int buttonXPos = number * distance + distance;
-            if (mouseX>=buttonXPos && mouseX <=buttonXPos+buttonSide && mouseY>=buttonYPos && mouseY <= buttonYPos+buttonSide) return number;
-            return null;
+            Vector2 mousePos = new Vector2(mouseX, mouseY);
+            
+            if (CheckCollisionPointRec(mousePos,buttonRec)) return true;
+            return false;
         }
         public void DrawRoom(int width, int height)
         {
