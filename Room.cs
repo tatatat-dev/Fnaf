@@ -7,41 +7,47 @@ namespace FnafCamerasAttempt
 {
     public class Room
     {
-        public int number;
+        public string cameraNumber;
+        public int cameraID;
         public string name;
+        const int textPoseXForName = 1300;
+        const int textPoseYForName = 20;
+        const int textSizeForName = 50;
+        
+
         public Color color;
 
         const int buttonSideX = 70;
         const int buttonSideY = 40;
         private Rectangle buttonRec;
-        const int textSize = 25;
+        private Rectangle buttonEdgeRec;
+        const int cameraEdge = 3;
+        const int textSizeCamera = 17;
+        const int textIndentCamera = 3;
 
-        private int buttonYPos;
-        private int buttonXPos;
-
-        public Room(int newNumber, string newName, int buttonX, int buttonY, Color newColor)
+        public Room(string newCameraNumber,int newCameraID, string newName, int buttonX, int buttonY, Color newColor)
         {
-            number = newNumber;
+            cameraNumber = newCameraNumber;
+            cameraID = newCameraID;
             name = newName;
-
-            buttonXPos = buttonX;
-            buttonYPos = buttonY;
 
             color = newColor;
 
 
-            buttonRec = new Rectangle(buttonXPos,buttonYPos,buttonSideX,buttonSideY);
+            buttonRec = new Rectangle(buttonX,buttonY,buttonSideX,buttonSideY);
+            buttonEdgeRec = new Rectangle(buttonX - cameraEdge, buttonY - cameraEdge, buttonSideX + cameraEdge * 2, buttonSideY + cameraEdge * 2);
         }
         public void DrawCamera(int currentRoom)
         {
-            Color colorForActiveCamera = Color.Gray;
-            if (currentRoom == number) 
+            Color colorForActiveCamera = Color.DarkGray;
+            if (currentRoom == cameraID) 
             { 
-                colorForActiveCamera = Color.LightGray;
-                DrawText($"{name}", 1200, 20, 50, Color.White);
+                colorForActiveCamera = Color.Gray;
             }
-            DrawRectangle(buttonXPos, buttonYPos, buttonSideX, buttonSideY, colorForActiveCamera);
-            DrawText($"CAM{number}", buttonXPos, buttonYPos, textSize, Color.White);
+            DrawRectangleRec(buttonEdgeRec, Color.White);
+            DrawRectangleRec(buttonRec, colorForActiveCamera);
+            DrawText("CAM", (int)buttonRec.X+textIndentCamera, (int)buttonRec.Y + textIndentCamera, textSizeCamera, Color.White);
+            DrawText($"{cameraNumber}", (int)buttonRec.X + textIndentCamera, (int)buttonRec.Y+ textSizeCamera + textIndentCamera, textSizeCamera, Color.White);
         }
 
         public bool OnClick(int mouseX, int mouseY)
@@ -54,6 +60,7 @@ namespace FnafCamerasAttempt
         public void DrawRoom(int width, int height)
         {
             DrawRectangle(0, 0, width, height, color);
+            DrawText($"{name}", textPoseXForName, textPoseYForName, textSizeForName, Color.White);
         }
     }
 }
